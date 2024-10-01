@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import Attendance from "../schema/attendance.model";
 import XLSX from "xlsx";
 
-export const recordAttendance = async (req: Request, res: Response): Promise<void> => {
+export const recordAttendance = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { studentId, courseId, action, location } = req.body;
 
@@ -103,7 +106,6 @@ export const getSemesterAttendanceReport = async (
   res: Response
 ) => {
   const { courseId, semesterStartDate, semesterEndDate } = req.query;
-  console.log(semesterStartDate, semesterEndDate);
 
   try {
     const startDate = new Date(semesterStartDate as string);
@@ -152,14 +154,7 @@ const exportToExcel = (data: any[], filename: string, res: Response) => {
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance Report");
 
-  const excelBuffer = XLSX.write(workbook, {
-    type: "buffer",
-    bookType: "xlsx",
-  });
-  res.setHeader(
-    "Content-Type",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  );
-  res.setHeader("Content-Disposition", `attachment; filename=${filename}.xlsx`);
-  res.send(excelBuffer);
+  const filePath = `./exported/${filename}.xlsx`;
+  XLSX.writeFile(workbook, filePath);
+  res.download(filePath);
 };
