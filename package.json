@@ -3,14 +3,11 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node dist/index.js",
+    "start": "ts-node src/index.ts",
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
     "typecheck": "tsc --noEmit"
-  },
-  "engines": {
-    "node": "18.x"
   },
   "keywords": [],
   "author": "",
