@@ -9,6 +9,9 @@
     "lint": "eslint --fix src test",
     "typecheck": "tsc --noEmit"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
