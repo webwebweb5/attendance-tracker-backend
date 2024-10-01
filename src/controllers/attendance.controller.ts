@@ -29,6 +29,22 @@ export const recordAttendance = async (
       return;
     }
 
+    if (action === "out") {
+      const checkingInAttendance = await Attendance.findOne({
+        studentId,
+        courseId,
+        action: "in",
+        createdAt: { $gte: todayStart, $lt: todayEnd },
+      });
+
+      if (!checkingInAttendance) {
+        res.status(400).json({
+          error: `Please record action 'in' first before 'out'.`,
+        });
+        return;
+      }
+    }
+
     const newAttendance = new Attendance({
       studentId,
       courseId,
