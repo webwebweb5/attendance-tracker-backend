@@ -19,7 +19,6 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "mongoose": "^8.7.0",
-    "pre-commit": "^1.2.2",
     "rimraf": "^6.0.1",
     "svix": "^1.32.0",
     "ts-node": "^10.9.2",
