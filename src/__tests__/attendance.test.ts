@@ -1,6 +1,6 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import { app } from "../index";
+import app from "../index";
 
 describe("Attendance API", () => {
   beforeAll(async () => {

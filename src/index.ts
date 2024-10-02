@@ -6,7 +6,7 @@ import attendanceRouter from "./routes/attendance.routes";
 import mongoose from "mongoose";
 import cors from "cors";
 
-export const app: Express = express();
+const app: Express = express();
 const port = process.env.PORT;
 
 app.use(express.json());
@@ -42,3 +42,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+export default app;
