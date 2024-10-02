@@ -2,12 +2,43 @@ import { Request, Response } from "express";
 import Attendance from "../schema/attendance.model";
 import XLSX from "xlsx";
 
+const UNIVERSITY_LAT = 18.824518;
+const UNIVERSITY_LNG = 99.045474;
+const RADIUS_IN_KM = 1.5;
+
+export const getAllAttendances = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const attendances = await Attendance.find().sort({ createdAt: -1 });
+
+    res.status(200).json(attendances);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching attendances" });
+  }
+};
+
 export const recordAttendance = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const { studentId, courseId, action, location } = req.body;
+
+    const distance = getDistanceFromLatLonInKm(
+      location.lat,
+      location.lng,
+      UNIVERSITY_LAT,
+      UNIVERSITY_LNG
+    );
+
+    if (distance > RADIUS_IN_KM) {
+      res.status(400).json({
+        error: `Your location is outside the allowed area. You must be within ${RADIUS_IN_KM * 100} meters of the university to record attendance.`,
+      });
+      return;
+    }
 
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -174,3 +205,27 @@ const exportToExcel = (data: any[], filename: string, res: Response) => {
   XLSX.writeFile(workbook, filePath);
   res.download(filePath);
 };
+
+function getDistanceFromLatLonInKm(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371; // Radius of the earth in km
+  const dLat = deg2rad(lat2 - lat1); // deg2rad below
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c; // Distance in km
+  return distance;
+}
+
+function deg2rad(deg: number): number {
+  return deg * (Math.PI / 180);
+}
